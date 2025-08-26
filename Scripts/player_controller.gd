@@ -4,13 +4,13 @@ class_name Player
 @onready var anim: AnimationPlayer = $AnimationPlayer
 
 @export_category("Movement variables")
-@export var gravity: float = 500.0
-@export var move_speed: float = 120.0
+@export var gravity: float = 700.0
+@export var move_speed: float = 140.0
 @export var deceleration: float = 0.1
 
 @export_category("Jump variables")
-@export var jump_speed: float = 190.0
-@export var acceleration: float = 290.0
+@export var jump_speed: float = 290.0
+@export var acceleration: float = 350.0
 @export var jump_amount: int = 2
 
 
@@ -54,7 +54,8 @@ func jump_logic() -> void:
 	else:
 		if jump_amount > 0:
 			if Input.is_action_just_pressed("ui_accept"):
-				jump_amount -= 1		
+				jump_amount -= 1
+				velocity.y = 0
 				velocity.y -= lerp(jump_speed, acceleration, 1)		
 		if Input.is_action_just_released("ui_accept"):
 				velocity.y = lerp(velocity.y, gravity, 0.2)		
