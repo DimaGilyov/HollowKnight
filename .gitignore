@@ -1,3 +1,5 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+HollowKnight.exe
+HollowKnight.console.exe
