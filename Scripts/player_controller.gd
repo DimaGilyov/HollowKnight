@@ -95,6 +95,7 @@ func wall_jumping():
 	is_wall_jumping = false
 		
 func _physics_process(delta: float) -> void:
+	#print("fps=", Engine.get_frames_per_second())
 	horizontal_movement() 
 	vertical_movement(delta)	
 	set_animation()
