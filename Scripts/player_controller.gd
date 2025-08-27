@@ -3,23 +3,34 @@ class_name Player
 
 @onready var anim: AnimationPlayer = $AnimationPlayer
 
+
 @export_category("Movement variables")
-@export var gravity: float = 700.0
+@export var gravity: float = 900.0
 @export var move_speed: float = 140.0
 @export var deceleration: float = 0.1
 
 @export_category("Jump variables")
-@export var jump_speed: float = 290.0
-@export var acceleration: float = 350.0
+@export var jump_speed: float = 330.0
+@export var acceleration: float = 430.0
 @export var jump_amount: int = 2
 
+@export_category("Wall jump variables")
+@export var wall_slide: float = 10.0
+@export var wall_x_forse_settings: float = 300.0
+@export var wall_y_forse_settings: float = -320.0
+var wall_x_forse: float = wall_x_forse_settings
+var wall_y_forse: float = wall_y_forse_settings
+@onready var left_ray: RayCast2D = $raycast/left_ray
+@onready var right_ray: RayCast2D = $raycast/right_ray
+var is_wall_jumping: bool = false 
 
 func horizontal_movement() -> void:
-	var direction: float = Input.get_axis("ui_left", "ui_right")
-	if direction:
-		velocity.x = direction * move_speed
-	else:
-		velocity.x = move_toward(velocity.x, 0, move_speed * deceleration)
+	if not is_wall_jumping:		
+		var direction: float = Input.get_axis("ui_left", "ui_right")
+		if direction:
+			velocity.x = direction * move_speed
+		else:
+			velocity.x = move_toward(velocity.x, 0, move_speed * deceleration)
 		
 func set_animation() -> void:
 	if velocity.y < 0:
@@ -28,6 +39,8 @@ func set_animation() -> void:
 		anim.play("Fall")
 	elif velocity.x != 0:
 		anim.play("Move")
+	elif is_on_wall_only():
+		anim.play("Fall")
 	else:
 		anim.play("Idle")	
 	
@@ -35,14 +48,17 @@ func set_animation() -> void:
 func flip() -> void:
 	if velocity.x > 0.0:
 		scale.x = scale.y * 1
+		wall_x_forse = wall_x_forse_settings
 	if velocity.x < 0.0:
 		scale.x = scale.y * -1
+		wall_x_forse = -wall_x_forse_settings
 
 func vertical_movement(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y += gravity * delta
 		
 	jump_logic()
+	wall_logic()
 	
  
 func jump_logic() -> void:
@@ -60,6 +76,23 @@ func jump_logic() -> void:
 		if Input.is_action_just_released("ui_accept"):
 				velocity.y = lerp(velocity.y, gravity, 0.2)		
 				velocity.y *= 0.3
+				
+func wall_logic() -> void:
+	if is_on_wall_only():
+		velocity.y = 10
+		if Input.is_action_just_pressed("ui_accept"):
+			#if left_ray.is_colliding():
+			#	velocity = Vector2(wall_x_forse, wall_y_forse)
+			#	wall_jumping()
+			if right_ray.is_colliding():
+				jump_amount = 2
+				velocity = Vector2(-wall_x_forse, wall_y_forse)
+				wall_jumping()
+
+func wall_jumping():
+	is_wall_jumping = true
+	await  get_tree().create_timer(0.12).timeout		
+	is_wall_jumping = false
 		
 func _physics_process(delta: float) -> void:
 	horizontal_movement() 

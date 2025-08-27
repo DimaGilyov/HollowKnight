@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://b1itpyxe3h0u7" path="res://Assets/Player/Sprites/Player_hollow_knight.png" id="2_y5hcb"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2nftw"]
+size = Vector2(12, 20)
 
 [sub_resource type="Animation" id="Animation_4qbli"]
 resource_name = "Fall"
@@ -99,6 +100,7 @@ _data = {
 }
 
 [node name="Player" type="CharacterBody2D"]
+safe_margin = 0.14
 script = ExtResource("1_5wxv7")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
@@ -116,3 +118,12 @@ libraries = {
 &"": SubResource("AnimationLibrary_kgmex")
 }
 autoplay = "Idle"
+
+[node name="raycast" type="Node2D" parent="."]
+
+[node name="left_ray" type="RayCast2D" parent="raycast"]
+visible = false
+target_position = Vector2(-14, 0)
+
+[node name="right_ray" type="RayCast2D" parent="raycast"]
+target_position = Vector2(14, 0)
